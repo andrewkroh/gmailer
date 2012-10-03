@@ -1,0 +1,34 @@
+apply plugin:'java'
+apply plugin:'application'
+apply plugin:'eclipse'
+
+repositories {
+    mavenCentral()
+}
+
+mainClassName = 'com.krohinc.gmailer.Gmail'
+version = '0.1.0'
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Gmailer', 
+                   'Implementation-Version': version,
+                   'Implementation-Vendor': 'Kroh Inc.',
+                   'Main-Class': mainClassName 
+    }
+}
+
+dependencies {
+    compile(
+        [group: 'javax.mail', name: 'mail', version: '1.4']
+    )
+}
+
+// Add properties file to distribution:
+applicationDistribution.from("${project.projectDir}/src/main/resources") {
+    into 'bin'
+    include '*.properties'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.2'
+}
