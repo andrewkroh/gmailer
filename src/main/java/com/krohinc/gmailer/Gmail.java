@@ -33,19 +33,40 @@ public class Gmail {
     
     private static class Arguments
     {
-        @Parameter(names={"--username", "-u"}, description="Gmail username", required=true)
+        @Parameter(names={"--displayname", "-n"}, 
+                   description="Gmail Display Name", 
+                   required=false)
+        private String displayName;
+
+        @Parameter(names={"--displayaddress", "-a"}, 
+                   description="Gmail Display Address", 
+                   required=false)
+        private String displayAddress;
+
+        @Parameter(names={"--username", "-u"}, 
+                   description="Gmail username", 
+                   required=true)
         private String username;
         
-        @Parameter(names={"--password", "-p"}, description="Gmail password", required=true)
+        @Parameter(names={"--password", "-p"}, 
+                   description="Gmail password", 
+                   required=true)
         private String password;
         
-        @Parameter(names={"--subject", "-s"}, description="Subject of message", required=true)
+        @Parameter(names={"--subject", "-s"}, 
+                   description="Subject of message", 
+                   required=true)
         private String subject;
         
-        @Parameter(names={"--to", "-t"}, description="To addresses", variableArity = true)
+        @Parameter(names={"--to", "-t"}, 
+                   description="To addresses", 
+                   required=true,
+                   variableArity = true)
         public List<String> to = new ArrayList<String>();
 
-        @Parameter(names={"--message", "-m"}, description="Message text", required=false)
+        @Parameter(names={"--message", "-m"}, 
+                   description="Message text", 
+                   required=false)
         private String message;
         
         @Parameter(names = { "--messageFile", "-mf" }, 
@@ -117,7 +138,21 @@ public class Gmail {
             toAddresses.add(new InternetAddress(address, true));
         }
         
+        String fromAddress = arguments.displayAddress == null ?
+            arguments.username : arguments.displayAddress;
+
         Message message = new MimeMessage(session);
+
+        if (arguments.displayName == null)
+        {
+            message.setFrom(new InternetAddress(fromAddress));
+        }
+        else
+        {
+            message.setFrom(new InternetAddress(fromAddress,
+                                     arguments.displayName));
+        }
+
         message.setRecipients(Message.RecipientType.TO, 
                                   toAddresses.toArray(new Address[]{}));
         message.setSubject(arguments.subject);
