@@ -31,5 +31,5 @@ applicationDistribution.from("${project.projectDir}/src/main/resources") {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.2'
+    gradleVersion = '1.12'
 }
