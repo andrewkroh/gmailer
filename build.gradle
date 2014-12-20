@@ -17,7 +17,7 @@ repositories {
     mavenCentral()
 }
 
-mainClassName = 'com.krohinc.gmailer.Gmail'
+mainClassName = 'com.andrewkroh.gmailer.Gmail'
 version = '1.2'
 jar {
     manifest {
