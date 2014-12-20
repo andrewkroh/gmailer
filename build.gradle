@@ -1,18 +1,29 @@
 apply plugin:'java'
 apply plugin:'application'
 apply plugin:'eclipse'
+apply plugin:'os-package'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.netflix.nebula:gradle-ospackage-plugin:1.12.7'
+    }
+}
 
 repositories {
     mavenCentral()
 }
 
 mainClassName = 'com.krohinc.gmailer.Gmail'
-version = '1.1.1'
+version = '1.2'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Gmailer', 
                    'Implementation-Version': version,
-                   'Implementation-Vendor': 'Kroh Inc.',
+                   'Implementation-Vendor': 'Andrew Kroh',
                    'Main-Class': mainClassName 
     }
 }
@@ -22,12 +33,27 @@ dependencies {
         [group: 'javax.mail', name: 'mail', version: '1.4'],
         [group: 'com.beust', name:'jcommander', version:'1.29']
     )
+
+    testCompile 'junit:junit:4.11'
 }
 
-// Add properties file to distribution:
-applicationDistribution.from("${project.projectDir}/src/main/resources") {
-    into 'bin'
-    include '*.properties'
+task gmailerRpm(type: Rpm) {
+    packageName = 'gmailer'
+    packageDescription = 'Java Command Line Utility for Sending Mail through Gmail'
+    license = 'Apache 2.0'
+    vendor = 'Andrew Kroh'
+    url = 'https://github.com/andrewkroh/gmailer'
+    arch = NOARCH
+    os = LINUX
+    release '1'
+
+    ext.installDir = "/usr/local/gmailer-${version}"
+
+    into installDir
+
+    from(tasks.installApp.outputs)
+
+    link('/usr/local/bin/gmailer', "${installDir}/bin/gmailer")
 }
 
 task wrapper(type: Wrapper) {
