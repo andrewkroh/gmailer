@@ -224,7 +224,7 @@ public class Gmail {
 	        }
 	        else
 	        {
-                message.setText(arguments.message);
+                message.setText(arguments.message.replaceAll("\\\\n", "\n"));
             }
         }
 
